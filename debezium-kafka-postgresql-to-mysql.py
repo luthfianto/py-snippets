@@ -1,6 +1,7 @@
 from kafka import KafkaConsumer
 import mysql.connector
 import secret
+import os
 
 def get_connection():
     return mysql.connector.connect(
@@ -14,29 +15,22 @@ conn = get_connection()
 cursor = conn.cursor()
 bootstrap_servers=['69.69.69.69:9092']
 
-topic_name = 'db.public.table'
-table = 'table'
-# Initialize consumer variable
+table = os.environ['table']
+topic_name = f"dbname.public.{table}"
+
 consumer = KafkaConsumer (topic_name, group_id ='group1',bootstrap_servers = bootstrap_servers)
 
 # Read and print message from consumer
 import json
+import common
+import datetime
 for message in consumer:
+    mv = message.value
+    mvdict=json.loads(mv)
     try:
-        mv = message.value
-        mvdict=json.loads(mv)
-        payload=mvdict["payload"]["after"]
-        myDict=payload
-        myDict['created_at'] = myDict['created_at'].replace('T', ' ')[:-8]
-        myDict['updated_at'] = myDict['updated_at'].replace('T', ' ')[:-8]
-
-        placeholders = ', '.join(['%s'] * len(myDict))
-        columns = ', '.join(myDict.keys())
-        sql = "INSERT INTO %s ( %s ) VALUES ( %s )" % (table, columns, placeholders)
-
-        # valid in Python 3
-        valus=list(myDict.values())
-        print(sql, valus)
+        sql, valus = common.pg_to_mysql(mvdict, table)
         cursor.execute(sql, valus)
-    except Error as e:
-        print("error", e)
+        print(datetime.datetime.now(), "success", sql, valus)
+    except Exception as e:
+        print(datetime.datetime.now(), "error", e)
+        print(mv)
