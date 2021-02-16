@@ -10,11 +10,18 @@ async def _startup():
     print("startup done")
 
 async def _get_query_with_pool(pool):
+    import aiomysql
     async with await pool.acquire() as conn:
         async with conn.cursor(aiomysql.DictCursor) as cur:
-            await cur.execute(get_sql_query())
+            await cur.execute("SELECT 1")
             return await cur.fetchall()
 
 @app.get("/v1/get_data")
 async def _get_data():
     return await _get_query_with_pool(app.state.pool)
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(app, host="0.0.0.0", port=8000)
