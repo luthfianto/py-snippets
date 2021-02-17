@@ -11,7 +11,7 @@ async def _startup():
 
 async def _get_query_with_pool(pool):
     import aiomysql
-    async with await pool.acquire() as conn:
+    async with pool.acquire() as conn:
         async with conn.cursor(aiomysql.DictCursor) as cur:
             await cur.execute("SELECT 1")
             return await cur.fetchall()
