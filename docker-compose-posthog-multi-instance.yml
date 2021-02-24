@@ -58,3 +58,4 @@ services:
             - 8002:8000
 
 version: '3'
+# Next: create a load balancer and vserver groups connecting to these ports
