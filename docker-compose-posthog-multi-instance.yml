@@ -1,0 +1,60 @@
+services:
+    redis:
+        container_name: posthog_redis
+        image: redis:alpine
+    web:
+        container_name: posthog_web
+        depends_on:
+            - redis
+        environment:
+            DATABASE_URL: 'changeme'
+            REDIS_URL: redis://redis:6379/
+            SECRET_KEY: 'changeme'
+            DISABLE_SECURE_SSL_REDIRECT: 0
+            SECURE_COOKIES: 1
+            IS_DOCKER: 1
+            IS_BEHIND_PROXY: 1
+            #ALLOWED_HOSTS: 
+        image: posthog/posthog
+        links:
+            - redis:redis
+        ports:
+            - 8000:8000
+    web2:
+        container_name: posthog_web2
+        depends_on:
+            - redis
+        environment:
+            DATABASE_URL: 'changeme'
+            REDIS_URL: redis://redis:6379/
+            SECRET_KEY: 'changeme'
+            DISABLE_SECURE_SSL_REDIRECT: 0
+            SECURE_COOKIES: 1
+            IS_DOCKER: 1
+            IS_BEHIND_PROXY: 1
+            #ALLOWED_HOSTS: 
+        image: posthog/posthog
+        links:
+            - redis:redis
+        ports:
+            - 8001:8000
+    web3:
+        container_name: posthog_web3
+        depends_on:
+            - redis
+        environment:
+            DATABASE_URL: 'changeme'
+            REDIS_URL: redis://redis:6379/
+            SECRET_KEY: 'changeme'
+            DISABLE_SECURE_SSL_REDIRECT: 0
+            SECURE_COOKIES: 1
+            IS_DOCKER: 1
+            IS_BEHIND_PROXY: 1
+            #ALLOWED_HOSTS: 
+        image: posthog/posthog
+        links:
+            - redis:redis
+        ports:
+            - 8002:8000
+
+version: '3'
