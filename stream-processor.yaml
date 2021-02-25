@@ -12,10 +12,10 @@ destination:
 
   initiate:
       table_name: 'tabel_mantap'
-      ddl: "{{SHOW CREATE TABLE mantap}}"
       if_schema_exists: "ignore" | "drop"
-      dml: 'SELECT count(1) as mantap from trans'
+      ddl: "{{SHOW CREATE TABLE mantap}}"
       if_data_exists: "drop"
+      dml: 'SELECT count(1) as mantap from trans'
 
 from_debezium_event:
     topic: 'trans'
