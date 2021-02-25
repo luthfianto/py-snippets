@@ -17,27 +17,27 @@ destination:
       dml: 'SELECT count(1) as mantap from trans'
       if_data_exists: "drop"
 
-from_event:
+from_debezium_event:
     topic: 'trans'
     logic:
       on_insert:
           - if:
               - payload.status != 99
             then:
-              - UPDATE tabel_mantap WHERE SET a+=1
+              sql: UPDATE tabel_mantap WHERE SET a+=1
       on_update:
           - if:
               - before.status != 99
               - after.status == 99
             then:
-              - UPDATE tabel_mantap WHERE SET a-=1
+              sql: UPDATE tabel_mantap WHERE SET a-=1
           - if:
               - before.status == 99
               - after.status != 99
             then:
-              - UPDATE tabel_mantap WHERE SET a+=1
+              sql: UPDATE tabel_mantap WHERE SET a+=1
       on_delete:
           - if:
               - before.status != 99
             then:
-              - UPDATE tabel_mantap WHERE SET a-=1; INSERT INTO tabel_lain values id={{before.id}}
+              sql: UPDATE tabel_mantap WHERE SET a-=1; INSERT INTO tabel_lain values id={{before.id}}
