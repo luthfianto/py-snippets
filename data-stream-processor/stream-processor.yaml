@@ -13,15 +13,12 @@ destination:
     connection_string: .....
 
   initiate:
-    table_name: 'tabel_mantap'
-
-    if_schema_exists: "ignore | drop"
-    ddl_to_destination: "{{SHOW CREATE TABLE mantap}}"
-
-    if_data_exists: "drop"
+    ddl_to_destination: CREATE TABLE new_mantap # "ignore | drop | fail" handled by sql
     dml_from_source: 'SELECT count(1) as Quantity from transaction'
+    if_data_exists: "ignore | drop | fail"
 
-on_event:
+
+from_event:
   topic: 'trans'
   logic:
     on_insert:
@@ -44,4 +41,4 @@ on_event:
       - if:
           - before.status != 99
         then:
-          sql: UPDATE tabel_mantap SET Quantity = Quantity - 1; INSERT INTO tabel_lain values id={{before.id}}
+          sql.$: UPDATE tabel_mantap SET Quantity = Quantity - 1; INSERT INTO tabel_lain values id={{before.id}}
