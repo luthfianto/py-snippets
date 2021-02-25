@@ -5,39 +5,43 @@ source:
     url: ip-kafka:9208
     username: null
     password: null
+  mysql:
+    connection_string: ..... 
 
 destination:
-  type: mysql
-  connection_string: .....
+  mysql:
+    connection_string: .....
 
   initiate:
-      table_name: 'tabel_mantap'
-      if_schema_exists: "ignore" | "drop"
-      ddl: "{{SHOW CREATE TABLE mantap}}"
-      if_data_exists: "drop"
-      dml: 'SELECT count(1) as mantap from trans'
+    table_name: 'tabel_mantap'
 
-from_debezium_event:
-    topic: 'trans'
-    logic:
-      on_insert:
-          - if:
-              - payload.status != 99
-            then:
-              sql: UPDATE tabel_mantap WHERE SET a+=1
-      on_update:
-          - if:
-              - before.status != 99
-              - after.status == 99
-            then:
-              sql: UPDATE tabel_mantap WHERE SET a-=1
-          - if:
-              - before.status == 99
-              - after.status != 99
-            then:
-              sql: UPDATE tabel_mantap WHERE SET a+=1
-      on_delete:
-          - if:
-              - before.status != 99
-            then:
-              sql: UPDATE tabel_mantap WHERE SET a-=1; INSERT INTO tabel_lain values id={{before.id}}
+    if_schema_exists: "ignore | drop"
+    ddl_to_destination: "{{SHOW CREATE TABLE mantap}}"
+
+    if_data_exists: "drop"
+    dml_from_source: 'SELECT count(1) as Quantity from transaction'
+
+on_event:
+  topic: 'trans'
+  logic:
+    on_insert:
+      - if:
+          - after.status != 99
+        then:
+            sql: UPDATE tabel_mantap SET Quantity = Quantity + 1
+    on_update:
+      - if:
+          - before.status != 99
+          - after.status == 99
+        then:
+          sql: UPDATE tabel_mantap SET Quantity = Quantity - 1
+      - if:
+          - before.status == 99
+          - after.status != 99
+        then:
+          sql: UPDATE tabel_mantap SET Quantity = Quantity + 1
+    on_delete:
+      - if:
+          - before.status != 99
+        then:
+          sql: UPDATE tabel_mantap SET Quantity = Quantity - 1; INSERT INTO tabel_lain values id={{before.id}}
