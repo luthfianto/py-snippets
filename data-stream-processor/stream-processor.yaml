@@ -17,28 +17,29 @@ destination:
     dml_from_source: 'SELECT count(1) as Quantity from transaction'
     if_data_exists: "ignore | drop | fail"
 
+alias:
+  query_update: UPDATE tabel_mantap SET Quantity = Quantity
 
-from_event:
+# example transform
+transform_from_event:
   topic: 'trans'
   logic:
-    on_insert:
-      - if:
-          - after.status != 99
-        then:
-            sql: UPDATE tabel_mantap SET Quantity = Quantity + 1
-    on_update:
-      - if:
-          - before.status != 99
-          - after.status == 99
-        then:
-          sql: UPDATE tabel_mantap SET Quantity = Quantity - 1
-      - if:
-          - before.status == 99
-          - after.status != 99
-        then:
-          sql: UPDATE tabel_mantap SET Quantity = Quantity + 1
-    on_delete:
-      - if:
-          - before.status != 99
-        then:
-          sql.$: UPDATE tabel_mantap SET Quantity = Quantity - 1; INSERT INTO tabel_lain values id={{before.id}}
+    # runs on both create and update
+    - if:
+        - before.status != 99
+        - after.status == 99
+      then:
+        sql: {{alias.query_update}} - 1
+
+    # runs on both update and delete
+    - if:
+        - before.status == 99
+        - after.status != 99
+      then:
+        sql: {{alias.query_update}} + 1
+
+    # only runs on delete
+    - if:
+        - op == 'd' # only runs on delete
+      then:
+        sql: INSERT INTO tbl_deleted_values (id) VALUES ({{before.id}}); INSERT INTO tbl_deleted_values_2 (id) VALUES ({{before.id}});
