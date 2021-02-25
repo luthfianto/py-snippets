@@ -16,6 +16,7 @@ destination:
     ddl_to_destination: CREATE TABLE new_mantap # "ignore | drop | fail" handled by sql
     dml_from_source: 'SELECT count(1) as Quantity from transaction'
     if_data_exists: "ignore | drop | fail"
+    method: csv
 
 alias:
   query_update: UPDATE tabel_mantap SET Quantity = Quantity
