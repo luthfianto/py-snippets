@@ -1,0 +1,40 @@
+source:
+  kafka:
+    url: ip-kafka:9208
+    username: null
+    password: null
+
+destination:
+  type: mysql
+  connection_string: .....
+
+  initiate:
+      table_name: 'tabel_mantap'
+      ddl: "{{SHOW CREATE TABLE mantap}}"
+      dml: 'SELECT count(1) as mantap from trans'
+      if_exists: "truncate" | "replace" | "fail" | "ignore"
+
+from_event:
+    topic: 'trans'
+    logic:
+      on_insert:
+          - if:
+              - payload.status != 99
+            then:
+              - UPDATE tabel_mantap WHERE SET a+=1
+      on_update:
+          - if:
+              - before.status != 99
+              - after.status == 99
+            then:
+              - UPDATE tabel_mantap WHERE SET a-=1
+          - if:
+              - before.status == 99
+              - after.status != 99
+            then:
+              - UPDATE tabel_mantap WHERE SET a+=1
+      on_delete:
+          - if:
+              - before.status != 99
+            then:
+              - UPDATE tabel_mantap WHERE SET a-=1; INSERT INTO tabel_lain values id={{before.id}}
