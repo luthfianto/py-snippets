@@ -1,1 +1,1 @@
-r'.*drive\.google\.com\/file\/d\/(.*)[\/]?'
+r'.*drive\.google\.com\/file\/d\/([\w-]*)[\/]?'
