@@ -1,0 +1,5 @@
+FROM confluentinc/cp-kafka-connect-base
+COPY core-site.xml /etc/core-site.xml
+COPY core-site.xml $KAFKA_HOME/config/core-site.xml
+COPY kafka-connect-oss-5.2.0.jar /usr/share/java/kafka-connect-oss/
+COPY kafka-connect-oss-5.2.0.jar $KAFKA_HOME/libs/kafka-connect-oss/
