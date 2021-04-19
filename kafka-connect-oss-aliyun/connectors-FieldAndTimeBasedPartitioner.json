@@ -1,0 +1,25 @@
+{
+    "name": "oss-sink-time",
+    "config": {
+        "connector.class": "com.aliyun.oss.connect.kafka.OSSSinkConnector",
+        "partition.duration.ms": "10000",
+        "tasks.max": "1",
+        "timezone": "Asia/Jakarta",
+        "rotate.interval.ms": "1000",
+        "locale": "US",
+        "storage.class": "com.aliyun.oss.connect.kafka.storage.OSSStorage",
+        "oss.bucket": "data-lake-p",
+        "flush.size": "5",
+        "timestamp.extractor": "RecordField",
+        "timestamp.field": "timestamp",
+        "path.format": "'_PARTITIONDATE'=YYYY-MM-dd",
+        "partitioner.class": "com.aliyun.oss.connect.kafka.FieldAndTimeBasedPartitioner",
+        "partition.field.name" : "type",
+        "topics": "events46",
+        "parquet.codec": "snappy",
+	    "oss.parquet.protobuf.schema.class": "events46,com.aliyun.oss.connect.kafka.format.parquet.Parquet$WithTypeNoPartition",
+	    "format.class": "com.aliyun.oss.connect.kafka.format.parquet.ParquetJsonFormat",
+	    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+	    "value.converter.schemas.enable": "true"
+	  }
+}
