@@ -1,21 +1,22 @@
-{"config": {
+{
+  "config": {
     "connector.class": "com.aliyun.oss.connect.kafka.OSSSinkConnector",
     "partition.duration.ms": "10000",
     "tasks.max": "1",
     "timezone": "Asia/Jakarta",
     "rotate.interval.ms": "1000",
     "locale": "US",
-    "name": "oss-sink",
     "storage.class": "com.aliyun.oss.connect.kafka.storage.OSSStorage",
-    "oss.bucket": "data-lake-",
+    "oss.bucket": "data-lake-p",
     "partitioner.class": "io.confluent.connect.storage.partitioner.FieldPartitioner",
     "partition.field.name": "type,_PARTITIONDATE",
-    "topics": "events28",
+    "topics": "events41",
     "parquet.codec": "snappy",
     "flush.size": "5",
-    "oss.parquet.protobuf.schema.class": "events28,com.aliyun.oss.connect.kafka.format.parquet.Parquet$TestMessage",
-        "format.class": "com.aliyun.oss.connect.kafka.format.json.JsonFormat",
-        "value.converter": "org.apache.kafka.connect.json.JsonConverter",
-        "value.converter.schemas.enable": "false"
-},"name": "oss-sink"
+    "oss.parquet.protobuf.schema.class": "events41,com.aliyun.oss.connect.kafka.format.parquet.Parquet$WithTypeWithPartition",
+    "format.class": "com.aliyun.oss.connect.kafka.format.parquet.ParquetJsonFormat",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter.schemas.enable": "true"
+  },
+  "name": "oss-sink-field"
 }
